@@ -161,7 +161,7 @@ pub fn get_primary_screen_size()->Size<u32>{
     Size{width:display.width,height:display.height}
 }
 
-pub fn get_implicit_screen_size()->Size<u32>{
+pub fn get_screen_size()->Size<u32>{
     let Some(display)=get_implicit_primary_screen()else{panic!("[!] SCREEN NOT FOUND")};    
     Size{width:display.width,height:display.height}
 }
@@ -171,7 +171,7 @@ pub fn get_primary_screen_size_or(fallback_size:Size<u32>)->Size<u32>{
     Size{width:display.width,height:display.height}
 }
 
-pub fn get_implicit_screen_size_or(fallback_size:Size<u32>)->Size<u32>{
+pub fn get_screen_size_or(fallback_size:Size<u32>)->Size<u32>{
     let Some(display)=get_implicit_primary_screen()else{return fallback_size};    
     Size{width:display.width,height:display.height}
 }
@@ -180,12 +180,8 @@ pub fn get_primary_screen_size_or_0()->Size<u32>{
     get_primary_screen_size_or(Size{width:0,height:0})
 }
 
-pub fn get_implicit_screen_size_or_0()->Size<u32>{
+pub fn get_screen_size_or_0()->Size<u32>{
     get_implicit_screen_size_or(Size{width:0,height:0})
-}
-
-pub fn get_screen_size()->Size<u32>{// Might remove that.
-    get_implicit_screen_size_or_0()
 }
 
 impl Window{}
