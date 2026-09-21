@@ -10,7 +10,9 @@ pub struct WindowData{
     running:bool,
 
     winit_window:Option<u32>,
-    winit_id:u32,
+    winit_id:Option<u32>,
+    parent_window:Option<u32>,
+    child_windows:Vec<u32>,
 
     wgpu_renderer:Option<u32>,
     internal_elements:Vec<u32>,
@@ -111,7 +113,10 @@ impl WindowData{
         Self{
             running:false,
 
-            winit_window:None,winit_id:1,
+            winit_window:None,
+            winit_id:None,
+            parent_window:None,
+            child_windows:Vec::new(),
             
             wgpu_renderer:None,
             internal_elements:Vec::new(),
