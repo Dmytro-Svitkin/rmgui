@@ -1,5 +1,6 @@
-mod window;
-mod render;
-mod internal;
-mod web;
-mod color;
+pub mod window;
+    mod window_display;
+pub mod render;
+pub mod internal;
+pub mod web;
+pub mod color;

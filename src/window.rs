@@ -1,5 +1,5 @@
 //static WINREG:Vec<Option<Box<WindowData>>>=Vec::from(None);
-use crate::window;
+pub use crate::window_display::*;
 
 const HALF:u32=i32::MAX as u32;
 
@@ -40,17 +40,33 @@ struct WindowSize{
     min:Size<u32>,
     max:Size<u32>,
     unity:SizeUnity,
-    resizable:[bool;2]
+    resizable:Size<bool>
 }
 
-struct Size<T>{
-    width:T,height:T,
+#[derive(Debug)]
+pub struct Size<T>{
+    pub(crate)width:T,pub(crate)height:T
+}
+
+impl<T>Size<T>{
+    pub fn from(width:T,height:T)->Self{
+        Size{width,height}
+    }
+}
+
+impl<T:Default>Size<T>{
+    pub fn new()->Self{
+        Self{
+            width:T::default(),
+            height:T::default()
+        }
+    }
 }
 
 enum SizeUnity{
     Pixel,LogicalPixel,
     PixelGrid(Size<u8>),LogicalPixelGrid(Size<u8>),
-    ScreenWidth,ScreenHeight,
+    ScreenWidth,ScreenHeight
 }
 
 struct WindowPosition{
@@ -129,7 +145,7 @@ impl WindowData{
                 min:Size{width:0,height:0},
                 max:Size{width:HALF,height:HALF},
                 unity:SizeUnity::LogicalPixel,
-                resizable:[true,true]},
+                resizable:Size{width:true,height:true}},
             
             position:WindowPosition{x:0,y:0},
             
@@ -141,52 +157,6 @@ impl WindowData{
             visibility:WindowVisibility{visible:true,visible_to_taskbar:true,visible_to_taskbar_paernt:true,visible_to_screenshare:true,opaque:true}
         }
     }
-}
-
-fn get_primary_screen()->Option<display_info::DisplayInfo>{
-    let Ok(displays)=display_info::DisplayInfo::all()else{return None};
-    for display in&displays{if display.is_primary{return Some(display.clone())}}
-    None
-}
-
-fn get_implicit_primary_screen()->Option<display_info::DisplayInfo>{
-    let Ok(displays)=display_info::DisplayInfo::all()else{return None};
-    if!displays.is_empty(){
-        if!&displays.len()==1{
-            for display in&displays{if display.is_primary{return Some(display.clone())}}
-            for display in&displays{if display.is_builtin{return Some(display.clone())}}// Fallback in case of primary screen not showing as primary but being built-in; might remove it after some testing.
-        }
-        return Some(displays[0].clone())
-    }
-    None
-}
-
-pub fn get_primary_screen_size()->Size<u32>{
-    let Some(display)=get_primary_screen()else{panic!("[!] PRIMARY SCREEN NOT FOUND")};    
-    Size{width:display.width,height:display.height}
-}
-
-pub fn get_screen_size()->Size<u32>{
-    let Some(display)=get_implicit_primary_screen()else{panic!("[!] SCREEN NOT FOUND")};    
-    Size{width:display.width,height:display.height}
-}
-
-pub fn get_primary_screen_size_or(fallback_size:Size<u32>)->Size<u32>{
-    let Some(display)=get_primary_screen()else{return fallback_size};
-    Size{width:display.width,height:display.height}
-}
-
-pub fn get_screen_size_or(fallback_size:Size<u32>)->Size<u32>{
-    let Some(display)=get_implicit_primary_screen()else{return fallback_size};    
-    Size{width:display.width,height:display.height}
-}
-
-pub fn get_primary_screen_size_or_0()->Size<u32>{
-    get_primary_screen_size_or(Size{width:0,height:0})
-}
-
-pub fn get_screen_size_or_0()->Size<u32>{
-    get_implicit_screen_size_or(Size{width:0,height:0})
 }
 
 impl Window{}
